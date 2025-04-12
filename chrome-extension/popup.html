@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shield Extension</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 10px;
+            width: 300px;
+        }
+        label {
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            margin: 5px 0;
+        }
+        button {
+            padding: 10px;
+            width: 100%;
+            margin-top: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h3>Configure Parent and Child ID</h3>
+    
+    <label for="parentId">Parent ID:</label>
+    <input type="text" id="parentId" placeholder="Enter Parent ID">
+
+    <label for="childNumber">Child Number:</label>
+    <input type="number" id="childNumber" placeholder="Enter Child Number">
+
+    <button id="saveButton">Save Configuration</button>
+
+    <script src="popup.js"></script>
+</body>
+</html>
