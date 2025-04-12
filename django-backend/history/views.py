@@ -4,6 +4,7 @@ from rest_framework import status
 from .models import History
 from guardian.models import Child
 from datetime import datetime
+from django.shortcuts import redirect,render
 
 @api_view(['POST'])
 def upload_history(request):
@@ -48,3 +49,12 @@ def upload_history(request):
         )
 
     return Response({"message": "History uploaded successfully!"}, status=status.HTTP_200_OK)
+
+def history_view(request):
+    # Fetch all the history records (or filter by some condition, if needed)
+    histories = History.objects.all().order_by('-visit_time')  # Ordered by visit time (most recent first)
+
+    context = {
+        'histories': histories
+    }
+    return render(request, 'history.html', context)
