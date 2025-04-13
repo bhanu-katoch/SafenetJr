@@ -1,11 +1,264 @@
-<!-- login.html -->
-{% block content %}
-  <h2>Login</h2>
-  <form method="POST">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Login</button>
-  </form>
-  <p>Register ? <a href="{% url 'register' %}">Register here</a>.</p>
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+  <link rel="stylesheet" href="{% static 'style.css' %}" />
+  <title>Login Page | Weavers</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Montserrat', sans-serif;
+      transition: background 0.3s, color 0.3s;
+    }
 
-{% endblock %}
+    body {
+      background: linear-gradient(to right, #e2e2e2, #c9d6ff);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      height: 100vh;
+      color: #000;
+    }
+
+    body.dark-mode {
+      background: linear-gradient(to right, #1c1c1c, #3a3a3a);
+      color: #fff;
+    }
+
+    .container {
+      background-color: #fff;
+      border-radius: 30px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.35);
+      position: relative;
+      overflow: hidden;
+      width: 768px;
+      max-width: 100%;
+      min-height: 480px;
+    }
+
+    .dark-mode .container {
+      background-color: #2a2a2a;
+      color: #fff;
+    }
+
+    .dark-mode .container form {
+      background-color: #2a2a2a;
+      color: #fff;
+    }
+
+    .container p, .container span, .container a, h1 {
+      color: inherit;
+    }
+
+    .container input {
+      background-color: #eee;
+      border: none;
+      margin: 8px 0;
+      padding: 10px 15px;
+      font-size: 13px;
+      border-radius: 8px;
+      width: 100%;
+      outline: none;
+    }
+
+    .dark-mode input {
+      background-color: #444;
+      color: #fff;
+    }
+
+    .container button {
+      background-color: #2da0a8;
+      color: #fff;
+      font-size: 12px;
+      padding: 10px 45px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+
+    .container button.hidden {
+      background-color: transparent;
+      border: 1px solid #fff;
+    }
+
+    .form-container {
+      position: absolute;
+      top: 0;
+      height: 100%;
+      transition: all 0.6s ease-in-out;
+    }
+
+    .sign-in {
+      left: 0;
+      width: 50%;
+      z-index: 2;
+    }
+
+    .container.active .sign-in {
+      transform: translateX(100%);
+    }
+
+    .toggle-container {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      width: 50%;
+      height: 100%;
+      overflow: hidden;
+      transition: all 0.6s ease-in-out;
+      border-radius: 150px 0 0 100px;
+      z-index: 1000;
+    }
+
+    .container.active .toggle-container {
+      transform: translateX(-100%);
+      border-radius: 0 150px 100px 0;
+    }
+
+    .toggle {
+      background: linear-gradient(to right, #5c6bc0, #2da0a8);
+      color: #fff;
+      position: relative;
+      left: -100%;
+      height: 100%;
+      width: 200%;
+      transform: translateX(0);
+      transition: all 0.6s ease-in-out;
+    }
+
+    .container.active .toggle {
+      transform: translateX(50%);
+    }
+
+    .toggle-panel {
+      position: absolute;
+      width: 50%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      padding: 0 30px;
+      text-align: center;
+      top: 0;
+      transform: translateX(0);
+      transition: all 0.6s ease-in-out;
+    }
+
+    .toggle-right {
+      right: 0;
+    }
+
+    .container.active .toggle-right {
+      transform: translateX(200%);
+    }
+
+    .theme-toggle {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      z-index: 2000;
+      background-color: #2da0a8;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .home-go{
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      z-index: 2000;
+      background-color: #2da0a8;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .logo {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      z-index: 2000;
+  font-weight: 800;
+  font-size: 1.6rem;
+  color: #00cba9;
+}
+.logo span {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+    .theme-toggle:hover {
+      background-color: #1c7d84;
+    }
+  </style>
+</head>
+
+<body class="dark-mode">
+  <button class="theme-toggle" onclick="toggleTheme()">🌗 Toggle Mode</button>
+  <a href="{% url 'home' %}">
+    <div class="logo" style="margin-left: 50px;">SafeNetJr <span>by Weavers</span></div>
+  </a>
+  
+  <div class="container" id="container">
+    <div class="form-container sign-in">
+      <form method="POST">
+        {% csrf_token %}
+        <h1>Log In</h1>
+        <span>Using Username & Password</span>
+
+        {{ form.non_field_errors }}
+
+        <input type="text" name="username" placeholder="Username" value="{{ form.username.value|default_if_none:'' }}">
+        {{ form.username.errors }}
+
+        <input type="password" name="password" placeholder="Password">
+        {{ form.password.errors }}
+
+        <button type="submit">Log In</button>
+      </form>
+    </div>
+
+    <div class="toggle-container">
+      <div class="toggle">
+        <div class="toggle-panel toggle-right">
+          <h1>Hello, Parent!</h1>
+          <p>Register with your personal details to use all of site features</p>
+          <a href="{% url 'register' %}">
+            <button class="hidden" id="register">Register Here</button>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // On load: check saved theme preference
+    if (localStorage.getItem('theme') === 'light') {
+      document.body.classList.remove('dark-mode');
+    }
+
+    function toggleTheme() {
+      document.body.classList.toggle('dark-mode');
+      const isDark = document.body.classList.contains('dark-mode');
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    }
+  </script>
+</body>
+</html>

@@ -85,4 +85,4 @@ def add_child(request):
         )
         return redirect('parent_dashboard')  # Redirect to dashboard after adding child
 
-    return render(request, 'add_child.html')
+    return render(request, 'dashboard.html')

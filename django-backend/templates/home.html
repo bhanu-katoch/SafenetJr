@@ -1,19 +1,932 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>home</title>
-</head>
-<body>
-    Welcome to home page
-    <br>
-    {% if request.user.is_authenticated %}
-    <a href="{% url 'parent_dashboard' %}">Go to Dashboard</a>
-    {% else %}
-    <a href="{% url 'login' %}">Login</a>
-    {% endif %}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SafeNetJr | Weavers</title>
+  <style>
+   .theme-toggle {
+      position: absolute;
+      top: 80px;
+      right: 20px;
+      z-index: 2000;
+      background-color: #2da0a8;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: bold;
+    }
 
-    
+    .theme-toggle:hover {
+      background-color: #1c7d84;
+    }
+body.dark-mode {
+  background: linear-gradient(to right, #1c1c1c, #3a3a3a);
+  color: #fff;
+}
+
+/* Apply dark mode to all sections */
+body.dark-mode {
+  background: linear-gradient(to right, #1c1c1c, #3a3a3a);
+  color: #fff;
+}
+
+.dark-mode header,
+.dark-mode nav,
+.dark-mode .container,
+.dark-mode .hero,
+.dark-mode .product,
+.dark-mode .pricing,
+.dark-mode .support,
+.dark-mode .contact-us {
+  background-color: #2a2a2a; /* Dark background */
+  color: #fff; /* Light text */
+}
+
+/* Dark mode header and navigation */
+.dark-mode header {
+  background-color: #1c1c1c;
+}
+
+.dark-mode nav a {
+  color: #fff; /* White text for links */
+}
+
+.dark-mode nav a:hover {
+  color: #00bcd4; /* Light blue hover effect */
+}
+
+/* Dark mode for form inputs and buttons */
+.dark-mode input,
+.dark-mode button {
+  background-color: #444;
+  color: #fff;
+}
+
+.dark-mode .cta,
+.dark-mode .theme-toggle {
+  background-color: #1c7d84; /* Light teal */
+}
+
+.dark-mode .cta:hover,
+.dark-mode .theme-toggle:hover {
+  background-color: #0d4b4a;
+}
+
+/* Ensure text and links are readable in dark mode */
+.dark-mode .pricing .card {
+  background-color: #2a2a2a; /* Dark background for pricing cards */
+  color: #fff; /* Light text */
+}
+
+.dark-mode .product .feature-card {
+  background-color: #333; /* Darker background for feature cards */
+  color: #fff; /* Light text */
+}
+
+.dark-mode .support .support-card {
+  background-color: #333;
+  color: #fff;
+}
+
+.dark-mode footer {
+  background-color: #1c1c1c; /* Dark footer background */
+  color: #aaa; /* Lighter text */
+}
+
+.dark-mode footer a {
+  color: #00acc1; /* Lighter link color */
+}
+
+.dark-mode footer a:hover {
+  color: #00bcd4; /* Lighter hover effect */
+}
+
+
+.dark-mode .container {
+  background-color: #2a2a2a;
+  color: #fff;
+}
+
+.dark-mode .container form {
+  background-color: #2a2a2a;
+  color: #fff;
+}
+
+.dark-mode .container p, 
+.dark-mode .container span, 
+.dark-mode .container a, 
+.dark-mode h1 {
+  color: inherit;
+}
+
+.dark-mode input {
+  background-color: #444;
+  color: #fff;
+}
+
+.dark-mode input::placeholder {
+  color: #aaa;
+}
+
+.dark-mode button {
+  background-color: #1c7d84;
+  color: #fff;
+}
+
+.dark-mode .theme-toggle {
+  background-color: #1c7d84;
+}
+
+.dark-mode .theme-toggle:hover {
+  background-color: #0d4b4a;
+}
+
+.dark-mode .hidden {
+  background-color: transparent;
+  border: 1px solid #fff;
+}
+
+.dark-mode .toggle-panel {
+  color: #fff;
+}
+
+.dark-mode .toggle {
+  background: linear-gradient(to right, #5c6bc0, #2da0a8);
+  color: #fff;
+}
+
+.dark-mode .toggle-panel a button {
+  background-color: #1c7d84;
+  color: #fff;
+}
+
+.dark-mode .toggle-container {
+  background-color: #333;
+}
+
+   * {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  background: linear-gradient(135deg, #f0f9ff, #e0f7fa);
+  color: #222;
+  padding: 20px;
+}
+
+/* Header */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+}
+
+.logo {
+  font-weight: 800;
+  font-size: 1.6rem;
+  color: #00cba9;
+}
+.logo span {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+nav a {
+  margin: 0 12px;
+  color: #333;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s;
+}
+nav a:hover {
+  color: #00bcd4;
+}
+
+.auth-buttons button {
+  margin-left: 10px;
+  padding: 8px 18px;
+  border-radius: 8px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+.login {
+  background: transparent;
+  color: #2196f3;
+  border: 2px solid #2196f3;
+}
+.login:hover {
+  background: #e3f2fd;
+}
+.signup {
+  background-color: #673ab7;
+  color: white;
+}
+.signup:hover {
+  background-color: #5e35b1;
+}
+
+/* Hero Section */
+.hero {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin-top: 40px;
+  gap: 40px;
+  align-items: center;
+}
+
+.text-content {
+    margin-left: 170px;
+  max-width: 700px;
+}
+h1 {
+  font-size: 2.8rem;
+  font-weight: 800;
+  margin-bottom: 20px;
+  line-height: 1.3;
+}
+.highlight {
+  color: #00cba9;
+}
+.underline {
+  background: #ffeb99;
+  border-radius: 18px;
+  padding: 2px 8px;
+  box-shadow: 0 2px 0 #ffd54f;
+}
+
+.text-content p {
+  margin-bottom: 25px;
+  font-size: 1.1rem;
+  line-height: 1.7;
+  
+}
+
+.cta {
+  padding: 14px 24px;
+  background-color: #ff4081;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  box-shadow: 0 4px 10px rgba(255, 64, 129, 0.3);
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+.cta:hover {
+  background-color: #f50057;
+}
+
+/* Platform Icons */
+.platforms p {
+  margin: 20px 0 10px;
+  font-weight: 600;
+}
+.icons span {
+  display: inline-block;
+  margin-right: 12px;
+  font-size: 1.6rem;
+  transition: transform 0.3s;
+}
+.icons span:hover {
+  transform: scale(1.2);
+  color: #00acc1;
+}
+
+/* Image Section */
+.image-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+.login {
+  background: transparent;
+  color: black; /* ✅ Black font color */
+  border: 2px solid #2196f3;
+  position: relative;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.login::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: conic-gradient(from 0deg, #2196f3, #00bcd4, #00cba9, #2196f3);
+  animation: rotateOutline 3s linear infinite;
+  z-index: -1;
+}
+
+.login::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  right: 2px;
+  bottom: 2px;
+  background: white;
+  z-index: -1;
+  border-radius: 6px;
+}
+
+.login:hover::before {
+  filter: brightness(1.2);
+}
+
+
+
+@keyframes rotateOutline {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+
+
+
+.image-content{
+    margin-right: 80px;
+}
+.pricing {
+  padding: 60px 20px;
+  text-align: center;
+  background: #f0f9ff;
+}
+
+.pricing h2 {
+  font-size: 2.2rem;
+  font-weight: 800;
+  margin-bottom: 10px;
+  color: #00cba9;
+}
+
+.pricing-subtext {
+  font-size: 1rem;
+  margin-bottom: 40px;
+}
+
+.pricing-cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 30px;
+}
+
+.card {
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+  padding: 30px 24px;
+  width: 280px;
+  transition: transform 0.3s;
+  position: relative;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.card h3 {
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.card .price {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #2196f3;
+  margin-bottom: 20px;
+}
+
+.card .price span {
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: #777;
+}
+
+.card ul {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 20px;
+  
+  text-align: left;
+}
+
+.card ul li {
+  margin-bottom: 10px;
+  position: relative;
+  padding-left: 20px;
+}
+
+.card ul li::before {
+  content: '✔';
+  position: absolute;
+  left: 0;
+  color: #00cba9;
+}
+
+.card .cta {
+  width: 100%;
+}
+
+.featured {
+  border: 2px solid #ff4081;
+}
+
+.product {
+  padding: 60px 20px;
+  background: #ffffff;
+  text-align: center;
+}
+
+.product h2 {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #00cba9;
+  margin-bottom: 10px;
+}
+
+.product-subtext {
+  font-size: 1rem;
+  margin-bottom: 40px;
+}
+
+.features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  justify-content: center;
+}
+
+.feature-card {
+  background: #f0f9ff;
+  border-radius: 20px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+  padding: 30px 20px;
+  width: 260px;
+  position: relative;
+  transition: transform 0.3s;
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+}
+
+.feature-card h3 {
+  font-size: 1.3rem;
+  color: #2196f3;
+  margin-bottom: 10px;
+}
+
+.feature-card p {
+  
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.feature-card .emoji {
+  font-size: 2rem;
+  margin-top: 20px;
+  display: inline-block;
+  color: #00bcd4;
+}
+.support {
+  padding: 60px 20px;
+  background: #e0f7fa;
+  text-align: center;
+}
+
+.support h2 {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #00bcd4;
+  margin-bottom: 10px;
+}
+
+.support-subtext {
+  font-size: 1rem;
+  margin-bottom: 40px;
+}
+
+.support-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  justify-content: center;
+}
+
+.support-card {
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+  padding: 30px 20px;
+  width: 280px;
+  transition: transform 0.3s;
+}
+
+.support-card:hover {
+  transform: translateY(-5px);
+}
+
+.support-card h3 {
+  font-size: 1.3rem;
+  color: #2196f3;
+  margin-bottom: 12px;
+}
+
+.support-card p {
+  font-size: 0.95rem;
+  
+  line-height: 1.6;
+  margin-bottom: 15px;
+}
+
+.support-link {
+  font-weight: bold;
+  text-decoration: none;
+  color: #00acc1;
+  transition: color 0.3s;
+}
+
+.support-link:hover {
+  color: #007c91;
+}
+.site-footer {
+  background-color: #e0f7fa;
+  padding: 50px 20px 20px;
+  font-size: 0.95rem;
+  
+  margin-top: 60px;
+}
+
+.footer-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 40px;
+  max-width: 1200px;
+  margin: auto;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 30px;
+}
+
+.footer-about,
+.footer-links,
+.footer-contact {
+  flex: 1;
+  min-width: 220px;
+}
+
+.footer-about h3 {
+  font-size: 1.4rem;
+  color: #00bcd4;
+  margin-bottom: 12px;
+}
+
+.footer-links h4,
+.footer-contact h4 {
+  font-size: 1.1rem;
+  color: #2196f3;
+  margin-bottom: 10px;
+}
+
+.footer-links ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer-links ul li {
+  margin-bottom: 8px;
+}
+
+.footer-links ul li a {
+  
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.footer-links ul li a:hover {
+  color: #00acc1;
+}
+
+.footer-contact p {
+  margin-bottom: 8px;
+}
+
+.footer-bottom {
+  text-align: center;
+  padding-top: 20px;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.contact-us {
+  background: #f0f9ff;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.contact-us h2 {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #00bcd4;
+  margin-bottom: 10px;
+}
+
+.contact-subtext {
+  font-size: 1rem;
+  margin-bottom: 30px;
+}
+
+.contact-form {
+  max-width: 600px;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 14px;
+  border: 2px solid #00cba9;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-family: 'Inter', sans-serif;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  border-color: #2196f3;
+}
+
+.send-btn {
+  background-color: #2196f3;
+  color: white;
+  padding: 14px;
+  border: none;
+  border-radius: 10px;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.send-btn:hover {
+  background-color: #1976d2;
+}
+html {
+  scroll-behavior: smooth;
+}
+
+  </style>
+</head>
+<body class="dark-mode">
+  <!-- <button class="theme-toggle" onclick="toggleTheme()">🌗 Toggle Mode</button>
+
+  <h1>Welcome to Home Page</h1>
+
+  {% if request.user.is_authenticated %}
+    <a href="{% url 'parent_dashboard' %}">Go to Dashboard</a>
+  {% else %}
+    <a href="{% url 'login' %}">Login</a>
+  {% endif %} -->
+
+    <button class="theme-toggle" onclick="toggleTheme()">🌗 Toggle Mode</button>
+
+  <header>
+    <div class="logo" style="margin-left: 50px;">SafeNetJr <span>by Weavers</span></div>
+    <nav>
+      <a href="#product">Product</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#support">Support</a>
+      <a href="#contact">Contact Us</a>
+    </nav>
+
+<div class="auth-buttons">
+  {% if request.user.is_authenticated %}
+    <a href="{% url 'parent_dashboard' %}">
+      <button class="login" style="color: black;">Go to Dashboard</button>
+    </a>
+  {% else %}
+    <a href="{% url 'login' %}">
+      <button class="login" style="color: black;">Log in</button>
+    </a>
+    <a href="{% url 'register' %}">
+      <button class="signup">Sign up</button>
+    </a>
+  {% endif %}
+</div>
+
+  </header>
+
+  <section class="hero">
+    <div class="text-content" style="border-bottom-width: 0px;border-bottom-style: solid;padding-bottom: 39px;">
+      <h1>
+        The all-in-one <span class="highlight">parental control</span> <br>
+        and digital <span class="underline">wellbeing</span> solution
+      </h1>
+      <p>Over 7 million parents trust SafeNetJr’s parental control tools to keep their kids’ screen time safe and balanced on every device—from one easy-to-use dashboard</p>
+      <button class="cta" ><a href="#contact" style="color: whitesmoke;">Get started free</a> </button>
+
+      <div class="platforms">
+        <p>Available for:</p>
+        <div class="icons">
+          <span>🪟</span>
+          
+        </div>
+      </div>
+    </div>
+
+    <div class="image-content">
+            <!-- <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExMGRsdmVqM3Z6M2VmOHF1Nmc2ZWl0bWx2aTRxbmI4YzF3bHN3eTU2YiZlcD12MV9naWZzX3NlYXJjaCZjdD1n/Y0Yxv1SvuMfRs/giphy.gif" alt="Parental Control GIF" class="control-gif" /> -->
+            <img src="{% static 'logo.gif' %}" alt="Parental Control GIF" class="control-gif" style="max-width: 50vh;">
+        
+          
+    </div>
+  </section>
+  <section class="product" id="product">
+    <h2>Our Product Features</h2>
+    <p class="product-subtext">Everything you need to protect and guide your family online</p>
+  
+    <div class="features">
+     
+  
+      <div class="feature-card">
+        <h3>App Monitoring</h3>
+        <p>Track and manage app usage to keep digital habits in check.</p>
+        <span class="emoji">📱</span>
+      </div>
+  
+      
+  
+      <div class="feature-card">
+        <h3>Web Filtering</h3>
+        <p>Protect from harmful content with intelligent website filters.</p>
+        <span class="emoji">🛡️</span>
+      </div>
+  
+      <div class="feature-card">
+        <h3>Daily Reports</h3>
+        <p>Get detailed activity summaries emailed right to you.</p>
+        <span class="emoji">📊</span>
+      </div>
+  
+      <div class="feature-card">
+        <h3>Cross-Platform</h3>
+        <p>Works seamlessly across phones, tablets, and desktops.</p>
+        <span class="emoji">💻</span>
+      </div>
+    </div>
+  </section>
+  
+  <section class="pricing" id="pricing">
+    <h2>Choose your plan</h2>
+    <p class="pricing-subtext">Flexible options for every family’s needs</p>
+    <div class="pricing-cards">
+      <div class="card">
+        <h3>Basic</h3>
+        <p class="price">$0 <span>/month</span></p>
+        <ul>
+          <li>Monitor 1 device</li>
+          <li>Daily activity reports</li>
+          <li>Basic web filtering</li>
+        </ul>
+        <button class="cta">Get Started</button>
+      </div>
+  
+      <div class="card featured">
+        <h3>Premium</h3>
+        <p class="price">Rs. 799 <span>/month</span></p>
+        <ul>
+          <li>Monitor 5 devices</li>
+          <li>App controls</li>
+          <li>Extended reports</li>
+        </ul>
+        <button class="cta">Choose Premium</button>
+      </div>
+  
+      <div class="card">
+        <h3>Family</h3>
+        <p class="price">Rs. 1299 <span>/month</span></p>
+        <ul>
+          <li>Monitor 10+ devices</li>
+          <li>All premium features</li>
+          <li>Priority support</li>
+        </ul>
+        <button class="cta">Choose Family</button>
+      </div>
+    </div>
+  </section>
+  <section class="support" id="support">
+    <h2>We're Here to Help</h2>
+    <p class="support-subtext">Find answers, contact our team, or browse helpful resources</p>
+  
+    <div class="support-options">
+      <div class="support-card">
+        <h3>Help Center</h3>
+        <p>Get instant answers to common questions, setup guides, and troubleshooting tips.</p>
+        <a href="#" class="support-link">Visit Help Center →</a>
+      </div>
+  
+      <div class="support-card">
+        <h3>Contact Support</h3>
+        <p>Need personal assistance? Reach out to our dedicated support team.</p>
+        <a href="#" class="support-link">Contact Us →</a>
+      </div>
+  
+      <div class="support-card">
+        <h3>Community Forum</h3>
+        <p>Ask questions, share tips, and connect with other SafeNetJr users like you.</p>
+        <a href="#" class="support-link">Join the Community →</a>
+      </div>
+    </div>
+  </section>
+  <section class="contact-us" id="contact">
+    <h2>Contact Us</h2>
+    <p class="contact-subtext">Have questions or need help? We'd love to hear from you.</p>
+  
+    <form class="contact-form">
+      <div class="form-group">
+        <input type="text" name="name" placeholder="Your Name" required>
+      </div>
+      <div class="form-group">
+        <input type="email" name="email" placeholder="Your Email" required>
+      </div>
+      <div class="form-group">
+        <textarea name="message" rows="5" placeholder="Your Message" required></textarea>
+      </div>
+      <button type="submit" class="send-btn">Send Message</button>
+    </form>
+  </section>
+  
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-about">
+        <h3>SafeNetJr | Weavers</h3>
+        <p>Empowering parents with tools to keep kids safe and balanced online. Trusted by millions globally.</p>
+      </div>
+  
+      <div class="footer-links">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="#product">Product</a>
+            
+            </li>
+          <li><a href="#pricing">Pricing</a></li>
+            <li><a href="#support">Support</a></li>
+            <li><a href="#contact">Contact Us</a></li>
+        </ul>
+      </div>
+  
+      <div class="footer-contact">
+        <h4>Contact</h4>
+        <p>Email: bhanuk.mca24@nitp.ac.in</p>
+        <p>Email: divyanshus.mca24@nitp.ac.in</p>
+        <p>Phone: +91 1234567891</p>
+      </div>
+    </div>
+  
+    <div class="footer-bottom">
+      <p>&copy; 2025 SafeNetJr by Weavers. All rights reserved.</p>
+    </div>
+  </footer>
+  
+
+  <script>
+    // On load: check saved theme preference
+if (localStorage.getItem('theme') === 'light') {
+  document.body.classList.remove('dark-mode');
+}
+
+function toggleTheme() {
+  document.body.classList.toggle('dark-mode');
+  const isDark = document.body.classList.contains('dark-mode');
+  localStorage.setItem('theme', isDark ? 'dark' : 'light');
+}
+  </script>
 </body>
 </html>
