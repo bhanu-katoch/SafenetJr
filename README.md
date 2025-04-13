@@ -46,3 +46,9 @@ SafenetJr is a real-time web application designed to help parents monitor and ma
    ```bash
    git clone https://github.com/yourusername/safenetjr.git
    cd safenetjr
+## 📽️ Demo Video
+
+- [ Video1 ](https://drive.google.com/file/d/17WYVfqWe05A15dl-diLxGlNPbhrPbKA6/view?usp=drivesdk)
+- [ Video2 ](https://drive.google.com/file/d/1yJZ21O3AalCOhr8asOfgD2hiao7jnbxq/view?usp=drivesdk)
+
+
