@@ -85,6 +85,7 @@ TEMPLATES = [
         },
     },
 ]
+ALLOWED_HOSTS = ['192.168.131.115', 'localhost', '127.0.0.1','0.0.0.0']
 
 WSGI_APPLICATION = "guardian_project.wsgi.application"
 
@@ -124,7 +125,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = "Asia/Kolkata"
 
 USE_I18N = True
 
