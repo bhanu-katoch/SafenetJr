@@ -1,143 +1,62 @@
-console.log("Shield extension is running.");
-const TESTING = true; // change to false before publishing
-const sec_10 = 10000 //sec
-
-// --- WEBSITE BLOCKER ---
-// Your blocking rules are automatically handled by "rules.json"
-// Nothing needed here unless you want to modify rules dynamically
-
-// --- HISTORY SENDER ---
-
-let CHILD_ID = null;  // Initialize CHILD_ID as null
-let PARENT_ID = 69538921;  // Initialize PARENT_ID as null
-let CHILD_NUMBER = 1; // Initialize CHILD_NUMBER
-let SERVER_URL = "http://127.0.0.1:8000";  // Initialize SERVER_URL as null
-
-// Function to fetch the Parent ID, Child Number, and Server URL from storage
-function getParentIdChildNumberAndServerUrl() {
-    return new Promise((resolve, reject) => {
-        chrome.storage.local.get(['parentId', 'childNumber', 'serverUrl'], function(result) {
-            if (chrome.runtime.lastError) {
-                reject(chrome.runtime.lastError);
-            } else {
-                resolve({
-                    parentId: result.parentId,
-                    childNumber: result.childNumber,
-                    serverUrl: result.serverUrl
-                });
-            }
-        });
-    });
-}
-
-// Function to fetch the Child ID based on Parent ID and Child Number
-async function fetchChildId() {
-    try {
-        const { parentId, childNumber, serverUrl } = await getParentIdChildNumberAndServerUrl();  // Get Parent ID, Child Number, and Server URL from storage
-
-        if (!parentId || !childNumber || !serverUrl) {
-            console.error('Parent ID, Child Number, or Server URL is not set.');
-            return;
-        }
-
-        PARENT_ID = parentId;
-        CHILD_NUMBER = childNumber;
-        SERVER_URL = serverUrl;
-
-        // Fetch the Child ID from the server based on Parent ID and Child Number
-        const response = await fetch(`${SERVER_URL}/api/get-child-id/?parent_id=${PARENT_ID}&child_number=${CHILD_NUMBER}`);
-        const data = await response.json();
-        CHILD_ID = data.child_id;  // Save the Child ID
-        console.log('Fetched Child ID:', CHILD_ID);
-    } catch (error) {
-        console.error('Failed to fetch Child ID:', error);
-    }
-}
-
-// Function to fetch history and send to server
-async function sendHistory() {
-    // Wait for the Child ID to be fetched before proceeding
-    if (!CHILD_ID || !SERVER_URL) {
-        console.log('Child ID or Server URL is not available yet.');
-        return;
-    }
-
-    chrome.history.search({ text: '', maxResults: 20 }, async function(historyItems) {
-        console.log('Fetched history:', historyItems);
-
-        try {
-            const response = await fetch(`${SERVER_URL}/api/upload_history/`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    child_id: String(CHILD_ID),  // Make sure this is in the string format
-                    history: historyItems
-                })
-            });
-
-            console.log('Request sent:', {
-                child_id: CHILD_ID,
-                history: historyItems
-            });
-
-            // Log the response from the API
-            console.log('API response status:', response.status);
-            if (response.ok) {
-                console.log('Request succeeded');
-            } else {
-                console.log('Request failed', await response.text());
-            }
-
-            const data = await response.json();
-            console.log('Server response:', data);
-        } catch (error) {
-            console.error('Failed to send history:', error);
-        }
-    });
-}
-
-// On install, fetch Child ID and set alarm
 chrome.runtime.onInstalled.addListener(() => {
-    console.log('Extension installed, fetching Child ID and setting up history sending alarm.');
+    // Define the API URL
+    const parentId = '69538921';  //  parent ID
+    const childNumber = 1;  //  child number
 
-    chrome.storage.local.set({
-      parentId: 69538921,        // your default parent ID
-      childNumber: 1,            // your default child number
-      serverUrl: "http://127.0.0.1:8000"  // your Django server URL
-  }, function() {
-      console.log('Initial data is set in storage.');
+    const apiUrl = `http://127.0.0.1:8000/api/get-child-id/?parent_id=${parentId}&child_number=${childNumber}`;
+
+    
+  
+    // Fetch data from the API
+    fetch(apiUrl)
+      .then(response => response.json())
+      .then(data => {
+        // Assuming the API returns a child ID, set it in local storage
+        const childId = data.child_id;  // Adjust this if the API returns a different key
+        
+        // Store the child ID in Chrome's local storage
+        chrome.storage.local.set({ childId: childId }, () => {
+          console.log('Child ID stored:', childId);
+        });
+      })
+      .catch(error => {
+        console.error('Error fetching child ID:', error);
+      });
   });
-    // Fetch the Child ID once the extension is installed
-    fetchChildId().then(() => {
-        if (TESTING) {
-            // For testing, every 10 seconds
-            setInterval(() => {
-                console.log('Testing mode: Sending history every 10 seconds...');
-                sendHistory();
-            }, 10000);
-        } else {
-            // Production: create alarm every 5 minutes
 
-              setInterval(() => {
-                console.log('Testing mode: Sending history every 10 seconds...');
-                sendHistory();
-            }, sec_10*2);
+chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+  if (changeInfo.url) {
+    // Get the child ID from chrome storage
+    chrome.storage.local.get(['childId'], (result) => {
+      const childId = result.childId;  // Retrieve the stored child ID
 
-            // console.log('Production mode: setting alarm every 5 minutes.');
-            // chrome.alarms.create('sendHistoryAlarm', { periodInMinutes: 1 });
-            // sendHistory(); // Also send once immediately
-        }
+      // If the childId exists
+      if (childId) {
+        const visitedUrl = tab.url;  // Current tab URL
+        const title = tab.title || "Untitled";  // Tab title, default to "Untitled"
+        const visitTime = new Date().getTime();  // Current time in milliseconds
 
+        const data = {
+          child_id: childId,
+          visited_url: visitedUrl,
+          title: title,
+          visit_time: visitTime
+        };
+
+        // API call to send data
+        fetch('http://localhost:8000/api/upload_history/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+        })
+          .then(response => response.json())
+          .then(data => console.log('Success:', data))
+          .catch((error) => console.error('Error:', error));      
+      } else {
+        console.error("Child ID is not available.");
+      }
     });
-});
-
-// On alarm trigger
-chrome.alarms.onAlarm.addListener((alarm) => {
-  if (alarm.name === 'sendHistoryAlarm') {
-      console.log('Alarm triggered: sending history...');
-      sendHistory();
   }
 });
-

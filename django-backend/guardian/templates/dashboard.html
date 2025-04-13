@@ -46,6 +46,7 @@
                     <td>{{ child.child_number }}</td>
                     <td>{{ child.child_id }}</td>
                     <td>{{ child.name }}</td>
+                    <a href="{% url 'history_view' child.child_id %}">history view</a>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -54,7 +55,6 @@
         <p>No children added yet.</p>
     {% endif %}
     <br>
-    <a href="{% url 'history_view' %}">history view</a>
 
 </body>
 </html>
