@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "guardian",
     "history",
+    "django_browser_reload",
 ]
 
 REST_FRAMEWORK = {
@@ -61,6 +62,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "corsheaders.middleware.CorsMiddleware",
+    "django_browser_reload.middleware.BrowserReloadMiddleware",
 ]
 CORS_ALLOWED_ORIGINS = [
     'http://127.0.0.1:8000',  # Your local Django server

@@ -28,4 +28,5 @@ urlpatterns = [
 
     path('guardian/', include('guardian.urls')),
     path('history/', include('history.urls')), 
+    path("__reload__/", include("django_browser_reload.urls")),
 ]
